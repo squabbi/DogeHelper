@@ -11,10 +11,6 @@ namespace DogeHelper.Commands
 {
     public class MagiskCommands
     {
-        // Magisk update JSON links
-        private readonly static string MagiskStableJson = "https://raw.githubusercontent.com/topjohnwu/magisk_files/master/stable.json";
-        private readonly static string MagiskBetaJson = "https://raw.githubusercontent.com/topjohnwu/magisk_files/master/beta.json";
-
         // Magisk update fields
         private static long MagiskStableTimestamp;
         private static long MagiskBetaTimestamp;
@@ -37,7 +33,7 @@ namespace DogeHelper.Commands
                 var embed = new DiscordEmbedBuilder
                 {
                     Title = "**Magisk**",
-                    Description = "A Magic Mask to Alter System Systemless-ly.",
+                    Description = "Stable version should work for most. Newer versions of Android may require temporary use of Canary or Beta builds.",
                     Color = DiscordColor.DarkGreen,
                     Author = new DiscordEmbedBuilder.EmbedAuthor
                     {
@@ -114,7 +110,7 @@ namespace DogeHelper.Commands
                 var embed = new DiscordEmbedBuilder
                 {
                     Title = "**Magisk Beta**",
-                    Description = "A Magic Mask to Alter System Systemless-ly.",
+                    Description = "Beta version of Magisk, not well tested and may have issues.",
                     Color = DiscordColor.Orange,
                     Author = new DiscordEmbedBuilder.EmbedAuthor
                     {
@@ -125,7 +121,7 @@ namespace DogeHelper.Commands
                     Footer = Globals.Footers.DefaultFooter()
                 };
 
-                // Check for latest Stable Magisk
+                // Check for latest Beta Magisk
                 try
                 {
                     await Task.Run(action: () => getMagiskBeta());
@@ -155,12 +151,61 @@ namespace DogeHelper.Commands
                 await context.RespondAsync(embed: embed);
             }
 
+            [Command("canary"), Aliases("c"), Description("Gets links for the latset canary version of Magisk.")]
+            public async Task LatestMagiskCanaryAsync(CommandContext context)
+            {
+                await context.TriggerTypingAsync();
+
+                var embed = new DiscordEmbedBuilder
+                {
+                    Title = "**Magisk Canary**",
+                    Description = "Unstable, bleeding edge version of Magisk.",
+                    Color = DiscordColor.DarkRed,
+                    Author = new DiscordEmbedBuilder.EmbedAuthor
+                    {
+                        Name = "topjohnwu",
+                        IconUrl = Globals.Authors.Topjohnwu.MagiskImg,
+                        Url = Globals.Authors.Topjohnwu.XdaProfile
+                    },
+                    Footer = Globals.Footers.DefaultFooter()
+                };
+
+                // Check for latest Canary Magisk.
+                try
+                {
+                    await Task.Run(action: () => getMagiskCanary());
+                }
+                catch (WebException ex)
+                {
+                    embed.AddField("Error downloading updates...", ex.Message);
+
+                    // Catch web exception, load cache if possible.
+                    if (MagiskBeta != null)
+                    {
+                        embed.AddField("Unable to fetch new Magisk update.", $"Find cached links below for Magisk ({ MagiskCanary.Magisk.Version }).");
+                    }
+                    else
+                    {
+                        embed.AddField("Unable to fetch new Magisk update.", "No cached links available. Please try again later.");
+                    }
+                }
+
+                if (MagiskCanary != null)
+                {
+                    embed.AddField($"Magisk Canary ({ MagiskCanary.Magisk.Version })", MagiskCanary.Magisk.Link);
+                    embed.AddField($"Magisk Manager Canary ({ MagiskCanary.App.Version })", MagiskCanary.App.Link);
+                    embed.AddField("Magisk Uninstaller", MagiskCanary.Uninstaller.Link);
+                }
+
+                await context.RespondAsync(embed: embed);
+            }
+
             private MagiskUpdateJson getMagiskStable()
             {
                 // Check if cached, only redownload if more than 1 hour old or MagiskStable has not been checked.
                 if ((DateTimeOffset.Now.ToUnixTimeSeconds() - MagiskStableTimestamp) > 3600 || MagiskStable == null)
                 {
-                    Console.WriteLine("[INFO]: Downloading Magisk stable update JSON... Previous version age: " + (DateTimeOffset.Now.ToUnixTimeSeconds() - MagiskStableTimestamp));
+                    Console.WriteLine("[INFO]: Downloading Magisk stable update JSON... Previous version age: {0}", (DateTimeOffset.Now.ToUnixTimeSeconds() - MagiskStableTimestamp));
 
                     // Save new timestamp.
                     MagiskStableTimestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
@@ -169,7 +214,7 @@ namespace DogeHelper.Commands
                     string jsonContents;
                     using (var wc = new WebClient())
                     {
-                        jsonContents = wc.DownloadString(MagiskStableJson);
+                        jsonContents = wc.DownloadString(Globals.Links.MagiskStableJson);
                         wc.Dispose();
                     }
 
@@ -178,7 +223,7 @@ namespace DogeHelper.Commands
                 }
                 else
                 {
-                    Console.WriteLine("[INFO]: Accessed cache values for Magisk Stable");
+                    Console.WriteLine("[INFO]: Accessed cached values for Magisk Stable");
                 }
 
                 return MagiskStable;
@@ -189,7 +234,7 @@ namespace DogeHelper.Commands
                 // Check if cached, only redownload if more than 1 hour old or MagiskStable has not been checked.
                 if ((DateTimeOffset.Now.ToUnixTimeSeconds() - MagiskBetaTimestamp) > 3600 || MagiskBeta == null)
                 {
-                    Console.WriteLine("[INFO]: Downloading Magisk beta update JSON... Previous version age: " + (DateTimeOffset.Now.ToUnixTimeSeconds() - MagiskBetaTimestamp));
+                    Console.WriteLine("[INFO]: Downloading Magisk beta update JSON... Previous version age: {0}", (DateTimeOffset.Now.ToUnixTimeSeconds() - MagiskBetaTimestamp));
 
                     // Save new timestamp.
                     MagiskBetaTimestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
@@ -198,7 +243,7 @@ namespace DogeHelper.Commands
                     string jsonContents;
                     using (var wc = new WebClient())
                     {
-                        jsonContents = wc.DownloadString(MagiskBetaJson);
+                        jsonContents = wc.DownloadString(Globals.Links.MagiskBetaJson);
                         wc.Dispose();
                     }
 
@@ -207,15 +252,37 @@ namespace DogeHelper.Commands
                 }
                 else
                 {
-                    Console.WriteLine("[INFO]: Accessed cache values for Magisk Beta");
+                    Console.WriteLine("[INFO]: Accessed cached values for Magisk Beta");
                 }
 
                 return MagiskBeta;
             }
 
-            // TODO: Magisk Canary builds
             private MagiskUpdateJson getMagiskCanary()
             {
+                // Check if cached
+                if ((DateTimeOffset.Now.ToUnixTimeSeconds() - MagiskCanaryTimestamp) > 3600 || MagiskCanary == null)
+                {
+                    Console.WriteLine("[INFO]: Downloading Magisk Canary update JSON... Previous version age: {0}", (DateTimeOffset.Now.ToUnixTimeSeconds() - MagiskCanaryTimestamp));
+
+                    // Set new timestamp
+                    MagiskCanaryTimestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
+
+                    // If greater than one hour, fetch new updates.
+                    string jsonContents;
+                    using (var wc = new WebClient())
+                    {
+                        jsonContents = wc.DownloadString(Globals.Links.MagiskCanaryJson);
+                        wc.Dispose();
+                    }
+
+                    MagiskCanary = JsonConvert.DeserializeObject<MagiskUpdateJson>(jsonContents);
+                }
+                else
+                {
+                    Console.WriteLine("[INFO]: Accessed cached values for Magisk Canary");
+                }
+
                 return MagiskCanary;
             }
         }
