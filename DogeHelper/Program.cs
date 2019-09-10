@@ -17,18 +17,29 @@ namespace DogeHelper
 
         static void Main(string[] args)
         {
+            Console.WriteLine(">>> DroidLinkr (DogeHelper) v{0} <<<\n\n", typeof(Program).Assembly.GetName().Version);
+
+            if (args.Length < 1)
+            {
+                Console.WriteLine("Invalid usage.\n" +
+                    "Usage: [exec name] {Discord Bot Token} [Prefix]\n" +
+                    "You must supply Discord Bot Token as the first argument to the program.");
+                Environment.Exit(1);
+            }
+
             MainAsync(args).ConfigureAwait(false).GetAwaiter().GetResult();
         }
 
         static async Task MainAsync(string[] args)
         {
-            // Print bot version
-            Console.WriteLine($">>> DogeHelper v{Assembly.GetEntryAssembly().GetName().Version}. Now loading... <<<");
+           // Load in token from arguments.
+            Globals.BotToken = args[0];
+            Console.WriteLine("Token: {0}", args[0]);
 
             // Initalise the bot
             discord = new DiscordClient(new DiscordConfiguration
             {
-                Token = Globals.botToken,
+                Token = Globals.BotToken,
                 TokenType = TokenType.Bot,
                 UseInternalLogHandler = true,
                 LogLevel = LogLevel.Info
@@ -61,7 +72,7 @@ namespace DogeHelper
         private static Task Discord_Ready(DSharpPlus.EventArgs.ReadyEventArgs e)
         {
             // Update game state when the bot is ready
-            discord.UpdateStatusAsync(new DiscordGame("with Android Q"), null, null);
+            discord.UpdateStatusAsync(new DiscordGame("Serving Links"), null, null);
 
             return Task.CompletedTask;
         }
