@@ -123,6 +123,11 @@ namespace DogeHelper
 
             public static readonly string MagiskXdaThread = "https://forum.xda-developers.com/apps/magisk/official-magisk-v7-universal-systemless-t3473445";
             public static readonly string MagiskCanaryXdaThread = "https://forum.xda-developers.com/apps/magisk/dev-magisk-canary-channel-bleeding-edge-t3839337";
+
+            // Magisk Update URLs
+            public readonly static string MagiskStableJson = "https://raw.githubusercontent.com/topjohnwu/magisk_files/master/stable.json";
+            public readonly static string MagiskBetaJson = "https://raw.githubusercontent.com/topjohnwu/magisk_files/master/beta.json";
+            public static readonly string MagiskCanaryJson = "https://raw.githubusercontent.com/topjohnwu/magisk_files/master/canary_builds/canary.json";
         }
 
         public static class Authors
