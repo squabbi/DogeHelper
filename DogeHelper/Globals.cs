@@ -16,6 +16,16 @@ namespace DogeHelper
 
             switch (_device)
             {
+                case "3axl":
+                case "pixel3axl":
+                case "bonito":
+                    return new string[] { "bonito", "Pixel 3a XL" };
+
+                case "3a":
+                case "pixel3a":
+                case "sargo":
+                    return new string[] { "sargo", "Pixel 3a" };
+
                 case "3xl":
                 case "pixel3xl":
                 case "crosshatch":
