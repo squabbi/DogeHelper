@@ -5,11 +5,13 @@ namespace DogeHelper
 {
     public static class Globals
     {
-        public static readonly string botToken = "NTI0MTM5MDM0MjE4NDYzMjMz.Dvj8-w.hX2q976Po95_TbNJFoYszPxu1n4";
-        public static readonly string botPrefix = ";;";
+        private static string botToken;
+        public static readonly string botPrefix = ">";
+
+        public static string BotToken { get => botToken; set => botToken = value; }
 
         /* Methods */
-        
+
         public static string[] Device(string[] device)
         {
             string _device = string.Concat(device).ToLower();
@@ -29,51 +31,46 @@ namespace DogeHelper
                 case "3xl":
                 case "pixel3xl":
                 case "crosshatch":
-                    return new String[] { "crosshatch", "Pixel 3 XL" };
+                    return new string[] { "crosshatch", "Pixel 3 XL" };
 
                 case "3":
                 case "pixel3":
                 case "blueline":
-                    return new String[] { "blueline", "Pixel 3" };
+                    return new string[] { "blueline", "Pixel 3" };
 
                 case "2xl":
                 case "pixel2xl":
                 case "taimen":
-                    return new String[] { "taimen", "Pixel 2 XL" };
+                    return new string[] { "taimen", "Pixel 2 XL" };
 
                 case "2":
                 case "pixel2":
                 case "walleye":
-                    return new String[] { "walleye", "Pixel 2" };
+                    return new string[] { "walleye", "Pixel 2" };
 
                 case "xl":
                 case "pixelxl":
                 case "marlin":
-                    return new String[] { "marlin", "Pixel XL" };
+                    return new string[] { "marlin", "Pixel XL" };
 
                 case "pixel":
                 case "sailfish":
-                    return new String[] { "sailfish", "Pixel" };
+                    return new string[] { "sailfish", "Pixel" };
 
                 case "c":
                 case "pixelc":
                 case "ryu":
-                    return new String[] { "ryu", "Pixel C" };
+                    return new string[] { "ryu", "Pixel C" };
 
                 case "6p":
                 case "nexus6p":
                 case "angler":
-                    return new String[] { "angler", "Nexus 6P" };
+                    return new string[] { "angler", "Nexus 6P" };
 
                 case "5x":
                 case "nexus5x":
                 case "bullhead":
-                    return new String[] { "bullhead", "Nexus 5X" };
-
-                case "6":
-                case "nexus6":
-                case "shamu":
-                    return new String[] { "shamu", "Nexus 6" };
+                    return new string[] { "bullhead", "Nexus 5X" };
             }
             
             // Return empty string array.
@@ -103,8 +100,8 @@ namespace DogeHelper
         /* Strings */
         public static class Strings
         {
-            public static readonly string DefaultFooter = "c0yns the Doge, helper bot for MaowDroid.";
-            public static readonly string HelpFooter = "help | c0yns the Doge, helper bot for MaowDroid.";
+            public static readonly string DefaultFooter = "DroidLinkr - Links for Android";
+            public static readonly string HelpFooter = "help | DroidLinkr - Links for Android.";
         }
 
         /* Links */
