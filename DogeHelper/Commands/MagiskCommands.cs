@@ -180,7 +180,7 @@ namespace DogeHelper.Commands
                     embed.AddField("Error downloading updates...", ex.Message);
 
                     // Catch web exception, load cache if possible.
-                    if (MagiskBeta != null)
+                    if (MagiskCanary != null)
                     {
                         embed.AddField("Unable to fetch new Magisk update.", $"Find cached links below for Magisk ({ MagiskCanary.Magisk.Version }).");
                     }
