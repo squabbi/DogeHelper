@@ -20,7 +20,7 @@ namespace DogeHelper.Commands
             var embed = new DiscordEmbedBuilder
             {
                 Title = "**Tools Help**",
-                Description = $"Displays appropriate tools per category. Usage: `{ Globals.botPrefix }<t/tools> <category>`.",
+                Description = $"Displays appropriate tools per category. Usage: `{ Globals.BotPrefix }<t/tools> <category>`.",
                 Color = DiscordColor.Orange,
                 Footer = Globals.Footers.HelpFooter()
             };
