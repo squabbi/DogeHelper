@@ -6,7 +6,6 @@ using DSharpPlus.CommandsNext;
 using DSharpPlus.Entities;
 
 using DogeHelper.Commands;
-using System.Reflection;
 
 namespace DogeHelper
 {
@@ -32,9 +31,16 @@ namespace DogeHelper
 
         static async Task MainAsync(string[] args)
         {
-           // Load in token from arguments.
+            // Load in token from arguments.
             Globals.BotToken = args[0];
-            Console.WriteLine("Token: {0}", args[0]);
+            Console.WriteLine("Token: {0}", Globals.BotToken);
+
+            if (args.Length > 1)
+            {
+                // Set the bot prefix
+                Globals.BotPrefix = args[1];
+                Console.WriteLine("Prefix: {0}", Globals.BotPrefix);
+            }
 
             // Initalise the bot
             discord = new DiscordClient(new DiscordConfiguration
@@ -48,15 +54,13 @@ namespace DogeHelper
             // Initalise commands handler
             commands = discord.UseCommandsNext(new CommandsNextConfiguration
             {
-                StringPrefix = Globals.botPrefix
+                StringPrefix = Globals.BotPrefix
             });
 
             // Register commands
             commands.RegisterCommands<Tools>();
             commands.RegisterCommands<Nexus6PCommands>();
             commands.RegisterCommands<MagiskCommands>();
-
-            commands.RegisterCommands<AdministrativeCommands>();
 
             // Subscribe events
             discord.MessageCreated += Discord_MessageCreated;
@@ -79,7 +83,7 @@ namespace DogeHelper
 
         private static Task Discord_GuildAvailable(DSharpPlus.EventArgs.GuildCreateEventArgs e)
         {
-            Console.WriteLine($"[INFO]: Connected to {e.Guild.Name}, owned by {e.Guild.Owner.Username}.");
+            Console.WriteLine($"\n[INFO] {DateTimeOffset.Now.DateTime}: Connected to {e.Guild.Name}, owned by {e.Guild.Owner.Username}.");
 
             return Task.CompletedTask;
         }
