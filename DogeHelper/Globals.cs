@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Reflection;
 using DSharpPlus.Entities;
 
 namespace DogeHelper
@@ -6,13 +8,14 @@ namespace DogeHelper
     public static class Globals
     {
         private static string botToken;
-        public static readonly string botPrefix = ">";
+        private static string botPrefix = ">";
 
-        public static string BotToken { get => botToken; set => botToken = value; }
+        internal static string BotToken { get => botToken; set => botToken = value; }
+        public static string BotPrefix { get => botPrefix; set => botPrefix = value; }
 
         /* Methods */
 
-        public static string[] Device(string[] device)
+        internal static string[] Device(string[] device)
         {
             string _device = string.Concat(device).ToLower();
 
@@ -78,9 +81,9 @@ namespace DogeHelper
         }
 
         /* Footers */
-        public static class Footers
+        internal static class Footers
         {
-            public static DiscordEmbedBuilder.EmbedFooter DefaultFooter()
+            internal static DiscordEmbedBuilder.EmbedFooter DefaultFooter()
             {
                 return new DiscordEmbedBuilder.EmbedFooter
                 {
@@ -88,7 +91,7 @@ namespace DogeHelper
                 };
             }
 
-            public static DiscordEmbedBuilder.EmbedFooter HelpFooter()
+            internal static DiscordEmbedBuilder.EmbedFooter HelpFooter()
             {
                 return new DiscordEmbedBuilder.EmbedFooter
                 {
@@ -98,52 +101,53 @@ namespace DogeHelper
         }
 
         /* Strings */
-        public static class Strings
+        internal static class Strings
         {
-            public static readonly string DefaultFooter = "DroidLinkr - Links for Android";
-            public static readonly string HelpFooter = "help | DroidLinkr - Links for Android.";
+            internal static readonly string DefaultFooter = "DroidLinkr - Links for Android";
+            internal static readonly string HelpFooter = "help | DroidLinkr - Links for Android.";
         }
 
         /* Links */
-        public static class Links
+        internal static class Links
         {
-            public static readonly string GoogleFactoryImages = "https://developers.google.com/android/images#";
-            public static readonly string GoogleFullOtaImages = "https://developers.google.com/android/ota#";
+            internal static readonly string GoogleFactoryImages = "https://developers.google.com/android/images#";
+            internal static readonly string GoogleFullOtaImages = "https://developers.google.com/android/ota#";
 
-            public static readonly string SdkPlatformTools = "https://developer.android.com/studio/releases/platform-tools";
-            public static readonly string GoogleUsbDrivers = "https://developer.android.com/studio/run/win-usb";
+            internal static readonly string SdkPlatformTools = "https://developer.android.com/studio/releases/platform-tools";
+            internal static readonly string GoogleUsbDrivers = "https://developer.android.com/studio/run/win-usb";
 
-            public static readonly string OsmodsBasketBuild = "https://basketbuild.com/devs/osm0sis/osmods";
-            public static readonly string OsmodsTwrpAngler = "https://basketbuild.com/filedl/devs?dev=osm0sis&dl=osm0sis/osmods/twrp-3.2.1-0-fbe-4core-angler.img";
-            public static readonly string OsmodsTwrpBullhead = "https://basketbuild.com/filedl/devs?dev=osm0sis&dl=osm0sis/osmods/twrp-3.2.1-0-fbe-4core-bullhead.img";
-            public static readonly string OsmodsBlodWorkaround = "https://basketbuild.com/filedl/devs?dev=osm0sis&dl=osm0sis/osmods/N5X-6P_BLOD_Workaround_Injector_Addon-AK2-signed.zip";
+            internal static readonly string OsmodsBasketBuild = "https://basketbuild.com/devs/osm0sis/osmods";
+            internal static readonly string OsmodsTwrpAngler = "https://basketbuild.com/filedl/devs?dev=osm0sis&dl=osm0sis/osmods/twrp-3.2.1-0-fbe-4core-angler.img";
+            internal static readonly string OsmodsTwrpBullhead = "https://basketbuild.com/filedl/devs?dev=osm0sis&dl=osm0sis/osmods/twrp-3.2.1-0-fbe-4core-bullhead.img";
+            internal static readonly string OsmodsBlodWorkaround = "https://basketbuild.com/filedl/devs?dev=osm0sis&dl=osm0sis/osmods/N5X-6P_BLOD_Workaround_Injector_Addon-AK2-signed.zip";
 
-            public static readonly string MagiskXdaThread = "https://forum.xda-developers.com/apps/magisk/official-magisk-v7-universal-systemless-t3473445";
-            public static readonly string MagiskCanaryXdaThread = "https://forum.xda-developers.com/apps/magisk/dev-magisk-canary-channel-bleeding-edge-t3839337";
+            internal static readonly string MagiskXdaThread = "https://forum.xda-developers.com/apps/magisk/official-magisk-v7-universal-systemless-t3473445";
+            internal static readonly string MagiskCanaryXdaThread = "https://forum.xda-developers.com/apps/magisk/dev-magisk-canary-channel-bleeding-edge-t3839337";
 
             // Magisk Update URLs
-            public readonly static string MagiskStableJson = "https://raw.githubusercontent.com/topjohnwu/magisk_files/master/stable.json";
-            public readonly static string MagiskBetaJson = "https://raw.githubusercontent.com/topjohnwu/magisk_files/master/beta.json";
-            public static readonly string MagiskCanaryJson = "https://raw.githubusercontent.com/topjohnwu/magisk_files/master/canary_builds/canary.json";
+            internal static readonly string MagiskStableJson = "https://raw.githubusercontent.com/topjohnwu/magisk_files/master/stable.json";
+            internal static readonly string MagiskBetaJson = "https://raw.githubusercontent.com/topjohnwu/magisk_files/master/beta.json";
+            internal static readonly string MagiskCanaryDebugJson = "https://raw.githubusercontent.com/topjohnwu/magisk_files/canary/debug.json";
+            internal static readonly string MagiskCanaryReleaseJson = "https://raw.githubusercontent.com/topjohnwu/magisk_files/canary/release.json";
         }
 
-        public static class Authors
+        internal static class Authors
         {
-            public static class Osm0sis
+            internal static class Osm0sis
             {
-                public static readonly string Img = "https://cdn-cf-1.xda-developers.com/customavatars/thumbs/avatar4544860_6.gif";
-                public static readonly string XdaProfile = "https://forum.xda-developers.com/member.php?u=4544860";
+                internal static readonly string Img = "https://cdn-cf-1.xda-developers.com/customavatars/thumbs/avatar4544860_6.gif";
+                internal static readonly string XdaProfile = "https://forum.xda-developers.com/member.php?u=4544860";
             }
 
-            public static class Google
+            internal static class Google
             {
-                public static readonly string GoogleImg = "https://www.google.com/s2/favicons?domain=www.google.com";
+                internal static readonly string GoogleImg = "https://www.google.com/s2/favicons?domain=www.google.com";
             }
 
-            public static class Topjohnwu
+            internal static class Topjohnwu
             {
-                public static readonly string MagiskImg = "https://www.didgeridoohan.com/magisk/images/magisk/logo192x192.png";
-                public static readonly string XdaProfile = "https://forum.xda-developers.com/member.php?u=4470081";
+                internal static readonly string MagiskImg = "https://www.didgeridoohan.com/magisk/images/magisk/logo192x192.png";
+                internal static readonly string XdaProfile = "https://forum.xda-developers.com/member.php?u=4470081";
             }
         }
 
