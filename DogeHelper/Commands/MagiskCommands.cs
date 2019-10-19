@@ -19,7 +19,8 @@ namespace DogeHelper.Commands
         // Magisk update JSON cache
         private static MagiskUpdateJson MagiskStable;
         private static MagiskUpdateJson MagiskBeta;
-        private static MagiskUpdateJson MagiskCanary;
+        private static MagiskUpdateJson MagiskCanaryRelease;
+        private static MagiskUpdateJson MagiskCanaryDebug;
 
         [Group("magisk", CanInvokeWithoutSubcommand = true)]
         [Description("Provides links to Magisk, direct download included.")]
@@ -93,8 +94,8 @@ namespace DogeHelper.Commands
 
                 if (MagiskStable != null)
                 {
-                    embed.AddField($"Magisk Stable ({ MagiskStable.Magisk.Version })", MagiskStable.Magisk.Link);
-                    embed.AddField($"Magisk Manager Stable ({ MagiskStable.App.Version })", MagiskStable.App.Link);
+                    embed.AddField($"Magisk Stable (v{ MagiskStable.Magisk.Version })", MagiskStable.Magisk.Link);
+                    embed.AddField($"Magisk Manager Stable (v{ MagiskStable.App.Version })", MagiskStable.App.Link);
                     embed.AddField("Magisk Uninstaller", MagiskStable.Uninstaller.Link);
                 }
 
@@ -143,8 +144,8 @@ namespace DogeHelper.Commands
 
                 if (MagiskBeta != null)
                 {
-                    embed.AddField($"Magisk Beta ({ MagiskBeta.Magisk.Version })", MagiskBeta.Magisk.Link);
-                    embed.AddField($"Magisk Manager Beta ({ MagiskBeta.App.Version })", MagiskBeta.App.Link);
+                    embed.AddField($"Magisk Beta (v{ MagiskBeta.Magisk.Version })", MagiskBeta.Magisk.Link);
+                    embed.AddField($"Magisk Manager Beta (v{ MagiskBeta.App.Version })", MagiskBeta.App.Link);
                     embed.AddField("Magisk Uninstaller", MagiskBeta.Uninstaller.Link);
                 }
 
@@ -192,8 +193,8 @@ namespace DogeHelper.Commands
 
                 if (MagiskCanary != null)
                 {
-                    embed.AddField($"Magisk Canary ({ MagiskCanary.Magisk.Version })", MagiskCanary.Magisk.Link);
-                    embed.AddField($"Magisk Manager Canary ({ MagiskCanary.App.Version })", MagiskCanary.App.Link);
+                    embed.AddField($"Magisk Canary (v{ MagiskCanary.Magisk.Version })", MagiskCanary.Magisk.Link);
+                    embed.AddField($"Magisk Manager Canary (v{ MagiskCanary.App.Version })", MagiskCanary.App.Link);
                     embed.AddField("Magisk Uninstaller", MagiskCanary.Uninstaller.Link);
                 }
 
@@ -258,7 +259,7 @@ namespace DogeHelper.Commands
                 return MagiskBeta;
             }
 
-            private MagiskUpdateJson getMagiskCanary()
+            private MagiskUpdateJson getMagiskReleaseCanary()
             {
                 // Check if cached
                 if ((DateTimeOffset.Now.ToUnixTimeSeconds() - MagiskCanaryTimestamp) > 3600 || MagiskCanary == null)
@@ -272,7 +273,7 @@ namespace DogeHelper.Commands
                     string jsonContents;
                     using (var wc = new WebClient())
                     {
-                        jsonContents = wc.DownloadString(Globals.Links.MagiskCanaryJson);
+                        jsonContents = wc.DownloadString(Globals.Links.MagiskCanaryReleaseJson);
                         wc.Dispose();
                     }
 
