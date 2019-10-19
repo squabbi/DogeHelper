@@ -16,7 +16,7 @@ namespace DogeHelper
 
         static void Main(string[] args)
         {
-            Console.WriteLine(">>> DroidLinkr (DogeHelper) v{0} <<<\n\n", typeof(Program).Assembly.GetName().Version);
+            Console.WriteLine("DroidLinks (DogeHelper) v{0}\n\n", typeof(Program).Assembly.GetName().Version);
 
             if (args.Length < 1)
             {
@@ -41,6 +41,8 @@ namespace DogeHelper
                 Globals.BotPrefix = args[1];
                 Console.WriteLine("Prefix: {0}", Globals.BotPrefix);
             }
+
+            Console.Write("\n");
 
             // Initalise the bot
             discord = new DiscordClient(new DiscordConfiguration
