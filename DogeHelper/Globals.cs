@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection;
 using DSharpPlus.Entities;
@@ -14,6 +15,41 @@ namespace DogeHelper
         public static string BotPrefix { get => botPrefix; set => botPrefix = value; }
 
         /* Methods */
+
+        internal enum GoogleDevice
+        {
+            Bonito,
+            Sargo,
+            Crosshatch,
+            Blueline,
+            Taimen,
+            Walleye,
+            Marlin,
+            Sailfish,
+            Ryu,
+            Angler,
+            Bullhead,
+            Shamu,
+            Fugu,
+            Volantisg,
+            Volantis,
+            Hammerhead,
+            Razor,
+            Razorg,
+            Mantaray,
+            Occam,
+            Nakasi,
+            Nakasig,
+            Tungsten,
+            Takju,
+            Yakju,
+            Mysid,
+            Mysidspr,
+            Soju,
+            Sojua,
+            Sojuk,
+            Sojus
+        }
 
         internal static string[] Device(string[] device)
         {
@@ -75,10 +111,26 @@ namespace DogeHelper
                 case "bullhead":
                     return new string[] { "bullhead", "Nexus 5X" };
             }
-            
+
             // Return empty string array.
             return new String[] { "", "" };
         }
+
+        internal static Dictionary<string, GoogleDevice> GoogleDeviceDict = new Dictionary<string, GoogleDevice>()
+        {
+            {"bonito", GoogleDevice.Bonito },
+            {"sargo", GoogleDevice.Sargo },
+            {"crosshatch", GoogleDevice.Crosshatch },
+            {"blueline", GoogleDevice.Blueline },
+            {"taimen", GoogleDevice.Taimen },
+            {"walleye", GoogleDevice.Walleye },
+            {"marlin", GoogleDevice.Marlin },
+            {"sailfish", GoogleDevice.Sailfish },
+            {"ryu", GoogleDevice.Ryu },
+            {"angler", GoogleDevice.Angler },
+            {"bullhead", GoogleDevice.Bullhead }
+        };
+
 
         /* Footers */
         internal static class Footers
@@ -103,8 +155,8 @@ namespace DogeHelper
         /* Strings */
         internal static class Strings
         {
-            internal static readonly string DefaultFooter = "DroidLinkr - Links for Android";
-            internal static readonly string HelpFooter = "help | DroidLinkr - Links for Android.";
+            internal static readonly string DefaultFooter = "DroidLinks - Links for Android";
+            internal static readonly string HelpFooter = "help | DroidLinks - Links for Android.";
         }
 
         /* Links */
