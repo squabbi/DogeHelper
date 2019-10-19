@@ -68,7 +68,7 @@ namespace DogeHelper.Commands
             if (device.Length > 0)
             {
                 deviceNames = Globals.Device(device);
-                if (!String.IsNullOrEmpty(deviceNames[0]))
+                if (!string.IsNullOrEmpty(deviceNames[0]))
                 {
                     embed.AddField("The following links are for:", $"**{ deviceNames[1] } ({ deviceNames[0] })**");
                 }
