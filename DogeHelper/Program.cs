@@ -63,6 +63,7 @@ namespace DogeHelper
             commands.RegisterCommands<Tools>();
             commands.RegisterCommands<Nexus6PCommands>();
             commands.RegisterCommands<MagiskCommands>();
+            commands.RegisterCommands<GoogleCommands>();
 
             // Subscribe events
             discord.MessageCreated += Discord_MessageCreated;
