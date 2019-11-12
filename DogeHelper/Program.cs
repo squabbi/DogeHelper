@@ -67,6 +67,7 @@ namespace DogeHelper
 
             // Subscribe events
             discord.MessageCreated += Discord_MessageCreated;
+            discord.GuildMemberRemoved += Discord_GuildMemberRemoved;
             discord.GuildAvailable += Discord_GuildAvailable;
             discord.Ready += Discord_Ready;
 
@@ -74,6 +75,11 @@ namespace DogeHelper
 
             // Indefinite delay
             await Task.Delay(-1);
+        }
+
+        private static async Task Discord_GuildMemberRemoved(DSharpPlus.EventArgs.GuildMemberRemoveEventArgs e)
+        {
+            await discord.SendMessageAsync(discord.GetChannelAsync(519817442881437714).Result, $"Goodbye {e.Member.Username.ToString()} {DiscordEmoji.FromName(discord, ":wave:")} ");
         }
 
         private static Task Discord_Ready(DSharpPlus.EventArgs.ReadyEventArgs e)
