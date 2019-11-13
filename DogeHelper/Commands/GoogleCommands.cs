@@ -12,7 +12,6 @@ namespace DogeHelper.Commands
 {
     class GoogleCommands
     {
-        
         internal async Task<List<FactoryImage>> LoadFactoryImages(int tableNo)
         {
             List<FactoryImage> factoryImages = new List<FactoryImage>();
@@ -21,7 +20,7 @@ namespace DogeHelper.Commands
             var config = Configuration.Default.WithDefaultLoader();
             var source = "https://developers.google.com/android/images";
             var context = BrowsingContext.New(config);
-            var document = await context.OpenAsync(source);
+            var document = await context.OpenAsync(source).ConfigureAwait(true);
 
             // Locate all tables in the site (containing the factory images)
             var tables = document.QuerySelectorAll("table");
@@ -54,13 +53,17 @@ namespace DogeHelper.Commands
         {
             // TODO: Cache images website
 
+            // Cache for Factory Images
+            private Dictionary<Globals.GoogleDevice, (long, FactoryImage)> cacheFactoryImages = 
+                new Dictionary<Globals.GoogleDevice, (long, FactoryImage)>();
+
             internal async Task<FactoryImage> GetLatestFactoryImage(Globals.GoogleDevice device)
             {
                 // AngleSharp, rip table contents
                 var config = Configuration.Default.WithDefaultLoader();
                 var source = "https://developers.google.com/android/images";
                 var context = BrowsingContext.New(config);
-                var document = await context.OpenAsync(source);
+                var document = await context.OpenAsync(source).ConfigureAwait(true);
 
                 // Locate all tables in the site (containing the factory images)
                 var tables = document.QuerySelectorAll("table");
@@ -95,7 +98,9 @@ namespace DogeHelper.Commands
                     Footer = Globals.Footers.DefaultFooter()
                 };
 
-                Console.WriteLine($"Factory Image command with: {string.Concat(device).ToLower()}");
+                var deviceArg = string.Concat(device).ToLower();
+                Globals.PrintMessage($"Factory Image query: {deviceArg} by user: {context.User.Username} " +
+                    $"({context.User.Id}).");
 
                 // Determine device
                 string[] deviceNames = new String[] { "", "" };
@@ -105,14 +110,13 @@ namespace DogeHelper.Commands
                     deviceNames = Globals.Device(device);
                     if (!string.IsNullOrEmpty(deviceNames[0]))
                     {
-                        //GoogleDevice googleDevice = (GoogleDevice)Enum.Parse(typeof(GoogleDevice), deviceNames[0]);
                         try
                         {
                             Globals.GoogleDeviceDict.TryGetValue(deviceNames[0], out Globals.GoogleDevice gDevice);
-                            FactoryImage factoryImage = await GetLatestFactoryImage(gDevice);
+                            FactoryImage factoryImage = await GetFactoryImage(gDevice).ConfigureAwait(true);
 
                             // Build embed
-                            embed.Title = $"**Factory Image for {factoryImage.Codename}**";
+                            embed.Title = $"**Factory Image for {deviceNames[1]} ({factoryImage.Codename})**";
                             embed.Description = $"Latest Google Factory Image for {deviceNames[1]} ({deviceNames[0]}).";
                             embed.ThumbnailUrl = "https://developers.google.com/site-assets/developers_64dp_72.png";
 
@@ -129,12 +133,52 @@ namespace DogeHelper.Commands
                     }
                     else
                     {
-                        embed.AddField("No device found.", "Please try again.");
+                        embed.AddField("No device found", "Please try again.");
                         embed.Color = DiscordColor.Red;
+                        Globals.PrintMessage($"No device found for {deviceArg}.");
                     }
                 }
+                else
+                {
+                    embed.AddField("No device name provided", "Command usage: g[oogle] f[actory] [device name]");
+                    embed.AddField("Example", $"{Globals.BotPrefix}g f pixel 4");
+                    embed.Color = DiscordColor.Red;
+                }
 
-                await context.RespondAsync(embed: embed);
+                await context.RespondAsync(embed: embed).ConfigureAwait(false);
+            }
+
+            private async Task<FactoryImage> GetFactoryImage(Globals.GoogleDevice device)
+            {
+                if (!FactoryImageHasCached(device))
+                {
+                    var factoryImage = await GetLatestFactoryImage(device);
+                    var timestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
+                    // Add to cache
+                    cacheFactoryImages.Add(device, (timestamp, factoryImage));
+                    Globals.PrintMessage($"Added cached FactoryImage for {device} at {timestamp}.");
+
+                    return factoryImage;
+                }
+
+                // Return cached FactoryImage from cache
+                cacheFactoryImages.TryGetValue(device, out (long, FactoryImage) result);
+                Globals.PrintMessage($"Returning cached FactoryImage for {device}. It is {result.Item1}" +
+                    $" seconds old.");
+                return result.Item2;
+            }
+
+            private bool FactoryImageHasCached(Globals.GoogleDevice device)
+            {
+                Globals.PrintMessage($"Checking for cached FactoryImage for {device}.");
+                if (cacheFactoryImages.ContainsKey(device))
+                {
+                    cacheFactoryImages.TryGetValue(device, out (long, FactoryImage) result);
+                    var age = DateTimeOffset.Now.ToUnixTimeSeconds() - result.Item1;
+                    return !(age > 86400);
+                }
+
+                return false;
             }
         }
     }
