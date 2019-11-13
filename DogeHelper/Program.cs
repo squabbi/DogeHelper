@@ -6,13 +6,17 @@ using DSharpPlus.CommandsNext;
 using DSharpPlus.Entities;
 
 using DogeHelper.Commands;
+using DSharpPlus.Interactivity;
+using DSharpPlus.CommandsNext.Exceptions;
 
 namespace DogeHelper
 {
     class Program
     {
-        static DiscordClient discord;
-        static CommandsNextModule commands;
+        public DiscordClient Discord { get; set; }
+        public CommandsNextModule Commands { get; set; }
+        public InteractivityModule Interactivity { get; set; }
+
 
         static void Main(string[] args)
         {
@@ -26,10 +30,12 @@ namespace DogeHelper
                 Environment.Exit(1);
             }
 
-            MainAsync(args).ConfigureAwait(false).GetAwaiter().GetResult();
+            //new MainAsync(args).ConfigureAwait(false).GetAwaiter().GetResult();
+            var prog = new Program();
+            prog.MainAsync(args).ConfigureAwait(false).GetAwaiter().GetResult();
         }
 
-        static async Task MainAsync(string[] args)
+        public async Task MainAsync(string[] args)
         {
             // Load in token from arguments.
             Globals.BotToken = args[0];
@@ -45,7 +51,7 @@ namespace DogeHelper
             Console.Write("\n");
 
             // Initalise the bot
-            discord = new DiscordClient(new DiscordConfiguration
+            Discord = new DiscordClient(new DiscordConfiguration
             {
                 Token = Globals.BotToken,
                 TokenType = TokenType.Bot,
@@ -53,39 +59,82 @@ namespace DogeHelper
                 LogLevel = LogLevel.Info
             });
 
-            // Initalise commands handler
-            commands = discord.UseCommandsNext(new CommandsNextConfiguration
+            // Initalise User Interactivity
+            Discord.UseInteractivity(new InteractivityConfiguration
             {
-                StringPrefix = Globals.BotPrefix
+                // default pagination behaviour to just ignore the reactions
+                PaginationBehaviour = TimeoutBehaviour.Ignore,
+                // default pagination timeout to 5 minutes
+                PaginationTimeout = TimeSpan.FromMinutes(5),
+                // default timeout for other actions to 2 minutes
+                Timeout = TimeSpan.FromMinutes(2)
+            });
+
+
+
+            // Initalise commands handler
+            Commands = Discord.UseCommandsNext(new CommandsNextConfiguration
+            {
+                StringPrefix = Globals.BotPrefix,
+                EnableMentionPrefix = true
             });
 
             // Register commands
-            commands.RegisterCommands<Tools>();
-            commands.RegisterCommands<Nexus6PCommands>();
-            commands.RegisterCommands<MagiskCommands>();
-            commands.RegisterCommands<GoogleCommands>();
+            Commands.RegisterCommands<Tools>();
+            Commands.RegisterCommands<Nexus6PCommands>();
+            Commands.RegisterCommands<MagiskCommands>();
+            Commands.RegisterCommands<GoogleCommands>();
+            Commands.RegisterCommands<LinkCommands>();
+
+            // Register Commands Hooks
+            Commands.CommandErrored += Commands_CommandErrored;
 
             // Subscribe events
-            discord.MessageCreated += Discord_MessageCreated;
-            discord.GuildMemberRemoved += Discord_GuildMemberRemoved;
-            discord.GuildAvailable += Discord_GuildAvailable;
-            discord.Ready += Discord_Ready;
+            Discord.MessageCreated += Discord_MessageCreated;
+            Discord.GuildMemberRemoved += Discord_GuildMemberRemoved;
+            Discord.GuildAvailable += Discord_GuildAvailable;
+            Discord.Ready += Discord_Ready;
 
-            await discord.ConnectAsync();
+            await Discord.ConnectAsync();
 
             // Indefinite delay
             await Task.Delay(-1);
         }
 
-        private static async Task Discord_GuildMemberRemoved(DSharpPlus.EventArgs.GuildMemberRemoveEventArgs e)
+        private async Task Commands_CommandErrored(CommandErrorEventArgs e)
         {
-            await discord.SendMessageAsync(discord.GetChannelAsync(519817442881437714).Result, $"Goodbye {e.Member.Username.ToString()} {DiscordEmoji.FromName(discord, ":wave:")} ");
+            // let's log the error details
+            e.Context.Client.DebugLogger.LogMessage(LogLevel.Error, "DogeHelper", $"{e.Context.User.Username} tried executing '{e.Command?.QualifiedName ?? "<unknown command>"}' but it errored: {e.Exception.GetType()}: {e.Exception.Message ?? "<no message>"}", DateTime.Now);
+
+            // let's check if the error is a result of lack
+            // of required permissions
+            if (e.Exception is ChecksFailedException ex)
+            {
+                // yes, the user lacks required permissions, 
+                // let them know
+
+                var emoji = DiscordEmoji.FromName(e.Context.Client, ":no_entry:");
+
+                // let's wrap the response into an embed
+                var embed = new DiscordEmbedBuilder
+                {
+                    Title = "Access denied",
+                    Description = $"{emoji} You do not have the permissions required to execute this command.",
+                    Color = new DiscordColor(0xFF0000) // red
+                };
+                await e.Context.RespondAsync("", embed: embed);
+            }
         }
 
-        private static Task Discord_Ready(DSharpPlus.EventArgs.ReadyEventArgs e)
+        private async Task Discord_GuildMemberRemoved(DSharpPlus.EventArgs.GuildMemberRemoveEventArgs e)
+        {
+            await Discord.SendMessageAsync(Discord.GetChannelAsync(519817442881437714).Result, $"Goodbye {e.Member.Username.ToString()} {DiscordEmoji.FromName(Discord, ":wave:")} ");
+        }
+
+        private Task Discord_Ready(DSharpPlus.EventArgs.ReadyEventArgs e)
         {
             // Update game state when the bot is ready
-            discord.UpdateStatusAsync(new DiscordGame("Serving Links"), null, null);
+            Discord.UpdateStatusAsync(new DiscordGame("Serving Links"), null, null);
 
             return Task.CompletedTask;
         }
@@ -97,12 +146,12 @@ namespace DogeHelper
             return Task.CompletedTask;
         }
 
-        private static async Task Discord_MessageCreated(DSharpPlus.EventArgs.MessageCreateEventArgs e)
+        private async Task Discord_MessageCreated(DSharpPlus.EventArgs.MessageCreateEventArgs e)
         {
             // Crying channel only
             if (e.Channel.Id.Equals(538197625309233182))
             {
-                await e.Message.CreateReactionAsync(DiscordEmoji.FromName(discord, ":cry:"));
+                await e.Message.CreateReactionAsync(DiscordEmoji.FromName(Discord, ":cry:"));
             }
         }
     }
