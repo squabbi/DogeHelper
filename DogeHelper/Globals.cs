@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection;
+using DogeHelper.Db;
 using DSharpPlus.Entities;
 
 namespace DogeHelper
@@ -18,6 +19,8 @@ namespace DogeHelper
 
         internal enum GoogleDevice
         {
+            Coral,
+            Flame,
             Bonito,
             Sargo,
             Crosshatch,
@@ -57,6 +60,16 @@ namespace DogeHelper
 
             switch (_device)
             {
+                case "4":
+                case "pixel4":
+                case "flame":
+                    return new string[] { "flame", "Pixel 4" };
+
+                case "4xl":
+                case "pixel4xl":
+                case "coral":
+                    return new string[] { "coral", "Pixel 4 XL" };
+
                 case "3axl":
                 case "pixel3axl":
                 case "bonito":
@@ -116,8 +129,15 @@ namespace DogeHelper
             return new String[] { "", "" };
         }
 
+        public static void PrintMessage(string message)
+        {
+            Console.WriteLine($"[INFO] [DogeHelper] {DateTimeOffset.Now.DateTime}: {message}");
+        }
+
         internal static Dictionary<string, GoogleDevice> GoogleDeviceDict = new Dictionary<string, GoogleDevice>()
         {
+            {"coral", GoogleDevice.Coral },
+            {"flame", GoogleDevice.Flame },
             {"bonito", GoogleDevice.Bonito },
             {"sargo", GoogleDevice.Sargo },
             {"crosshatch", GoogleDevice.Crosshatch },
