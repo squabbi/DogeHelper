@@ -87,10 +87,7 @@ namespace DogeHelper.Commands
 
             void PrintUpdate()
             {
-                Console.WriteLine("[INFO] {0}: Channel: {1}, Timestamp: {2}.",
-                DateTimeOffset.Now.DateTime,
-                build,
-                timestamp);
+                Globals.PrintMessage($"Magisk Channel: {build}, Timestamp: {timestamp}.");
             }
             
             MagiskUpdateJson CheckMagiskUpdate()
